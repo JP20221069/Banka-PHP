@@ -10,8 +10,8 @@
  *
  * @author PECA
  */
-include_once "../Model/Racun.php";
-include_once "../Broker/DBBroker.php";
+include_once "Model\Racun.php";
+include_once "Broker\DBBroker.php";
 class RacunController {
     
     private $dbb;
@@ -22,7 +22,7 @@ class RacunController {
     
     function VratiRacun(string $brojRacuna)
     {
-        $query = "SELECT * FROM Racun WHERE brojracuna='$brojRacuna';";
+        $query = "SELECT * FROM racuni WHERE brojracuna='$brojRacuna';";
         $rezultat = $this->dbb->executeQuery($query);
         if(count($rezultat)==0)
         {
@@ -34,7 +34,7 @@ class RacunController {
     
     function VratiStanje(string $brojRacuna)
     {
-        $query = "SELECT stanje FROM Racun WHERE brojracuna='$brojRacuna';";
+        $query = "SELECT stanje FROM racuni WHERE brojracuna='$brojRacuna';";
         $rezultat = $this->dbb->executeQuery($query);
         if(count($rezultat)==0)
         {
@@ -46,7 +46,7 @@ class RacunController {
     
     function AzurirajStanje(string $brojRacuna,int $novoStanje)
     {
-        $query = "UPDATE racuni SET stanje=$novoStanje WHERE brojracuna=$brojRacuna;";
+        $query = "UPDATE racuni SET stanje=$novoStanje WHERE brojracuna='$brojRacuna';";
         $rezultat = $this->dbb->executeNonQuery($query);
         if($rezultat==false)
         {
@@ -54,19 +54,56 @@ class RacunController {
         }
     }
     
+    function VratiSveRacune()
+    {
+        $query = "SELECT * FROM racuni;";
+        $rezultat = $this->dbb->executeQuery($query);
+        $vracanje = [];
+        for($i=0;$i<count($rezultat);$i++)
+        {
+            $red = $rezultat[$i];
+            $vracanje[] = new Racun($red["brojracuna"], $red["ime"], $red["prezime"], $red["stanje"]);
+        }
+        return $vracanje;
+    }
+    
     function Uplati(int $novac,string $brojRacuna)
     {
+        $racun = $this->VratiRacun($brojRacuna);
+        $this->AzurirajStanje($racun->getBrojRacuna(), $racun->getStanje()+$novac);
         
     }
     
     function Podigni(int $novac,string $brojRacuna)
     {
-        
+        $racun = $this->VratiRacun($brojRacuna);
+        if($racun->getStanje()>=$novac) // OK
+        {
+            $this->AzurirajStanje($racun->getBrojRacuna(), $racun->getStanje()-$novac);
+        }
+        else
+        {
+            die("Greska: Nema dovoljno sredstava na racunu.");
+        }
     }
     
     function Prenesi(int $novac,string $brojRacuna1,string $brojRacuna2)
     {
-        
+        $racun1 = $this->VratiRacun($brojRacuna1);
+        $racun2 = $this->VratiRacun($brojRacuna2);
+        if($racun1->getBrojRacuna()==$racun2->getBrojRacuna())
+        {
+            die("Greska: Nemoguc prenos.");
+        }
+        if($racun1->getStanje()>=$novac) // OK
+        {
+            $this->AzurirajStanje($racun1->getBrojRacuna(), $racun1->getStanje()-$novac);
+            $this->AzurirajStanje($racun2->getBrojRacuna(), $racun2->getStanje()+$novac);
+        }
+        else
+        {
+            die("Greska: Nema dovoljno sredstava na racunu sa kog prenosite sretstva.");
+        }
     }
     
     

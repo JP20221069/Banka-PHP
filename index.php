@@ -6,11 +6,18 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Project/PHP/PHPProject.php to edi
 <html>
     <head>
         <meta charset="UTF-8">
-        <title></title>
+        <title>Banka</title>
+        <link rel="stylesheet" href="style/mystyle.css"/>
     </head>
     <body>
-        <?php
-        // put your code here
-        ?>
+       <ul>
+        <li><a href="index.php">Home</a></li>
+        <li><a href="isplata.php">Isplata</a></li>
+        <li><a href="uplata.php">Uplata</a></li>
+        <li><a href="prenos.php">Prenos</a></li>
+        <li><a href="stanje.php">Stanje</a></li>
+    </ul> 
+        
+        <h1>Dobrodosli u banku</h1>
     </body>
 </html>

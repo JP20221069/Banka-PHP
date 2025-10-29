@@ -50,10 +50,10 @@ class Racun {
     }
         
     public function __construct($brojRacuna, $ime, $prezime, $stanje) {
-        $this->brojRacuna = $brojRacuna;
-        $this->ime = $ime;
-        $this->prezime = $prezime;
-        $this->stanje = $stanje;
+        $this->setBrojRacuna($brojRacuna);
+        $this->setIme($ime);
+        $this->setPrezime($prezime);
+        $this->setStanje($stanje);
     }
 
     
